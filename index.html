@@ -1,0 +1,583 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Yeeun Lee</title>
+<meta name="description" content="웨어러블 초음파 센싱과 하이드로겔 커플런트를 연구하는 이예은의 연구 홈페이지.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@300;400;500;600&display=swap">
+<style>
+  /* Layout: single reading column with a mono label rail to its left at desktop width; rail folds above each section on narrow screens. */
+  :root {
+    --bg: #f4f6f6;
+    --surface: #ffffff;
+    --ink: #11191b;
+    --muted: #5d6b6d;
+    --hairline: #d5dcdc;
+    --accent: #0d6e68;
+    --accent-soft: #d8ebe8;
+
+    --font-display: "Hahmlet", "Nanum Myeongjo", ui-serif, Georgia, serif;
+    --font-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #0d1214;
+      --surface: #141b1d;
+      --ink: #e7eceb;
+      --muted: #94a3a4;
+      --hairline: #273133;
+      --accent: #58cfc2;
+      --accent-soft: #15302e;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #0d1214;
+    --surface: #141b1d;
+    --ink: #e7eceb;
+    --muted: #94a3a4;
+    --hairline: #273133;
+    --accent: #58cfc2;
+    --accent-soft: #15302e;
+  }
+
+  * { box-sizing: border-box; }
+  :root { color-scheme: light; }
+  img { max-width: 100%; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 920px;
+    margin: 0 auto;
+    padding-inline: 20px;
+    padding-block: 56px 72px;
+    display: flex;
+    flex-direction: column;
+    gap: 56px;
+  }
+
+  a {
+    color: var(--accent);
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+  }
+  a:focus-visible,
+  .chip:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* ---- hero ---- */
+
+  .hero { display: flex; flex-direction: column; gap: 22px; }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  h1 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2.5rem, 7vw, 3.9rem);
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  h1 .latin {
+    display: block;
+    font-size: 0.42em;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    margin-top: 12px;
+  }
+
+  .standfirst {
+    font-size: 1.0625rem;
+    line-height: 1.8;
+    max-width: 62ch;
+    margin: 0;
+  }
+
+  .standfirst strong { font-weight: 500; color: var(--ink); }
+
+  .affil {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.9;
+    margin: 0;
+  }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  .chip {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: 6px 11px;
+    border: 1px solid var(--hairline);
+    background: var(--surface);
+    color: var(--ink);
+    text-decoration: none;
+    display: inline-flex;
+    gap: 7px;
+    align-items: baseline;
+  }
+  .chip:hover { border-color: var(--accent); color: var(--accent); }
+  .chip .k { color: var(--muted); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; }
+
+  ul.keywords {
+    list-style: none;
+    margin: 2px 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+  }
+  ul.keywords li { display: flex; align-items: baseline; gap: 14px; }
+  ul.keywords li::before { content: "·"; color: var(--accent); }
+  ul.keywords li:first-child::before { content: "KEYWORDS"; letter-spacing: 0.14em; font-size: 10px; }
+
+  /* ---- pulse-echo figure ---- */
+
+  figure {
+    margin: 0;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    padding: 20px 18px 16px;
+  }
+
+  .figwrap { overflow-x: auto; }
+  figure svg { display: block; width: 100%; min-width: 440px; height: auto; }
+
+  figcaption {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-top: 14px;
+    max-width: 60ch;
+  }
+
+  .svg-band { font-family: var(--font-mono); font-size: 11px; }
+
+  /* ---- sections ---- */
+
+  section { display: grid; grid-template-columns: 1fr; gap: 18px; }
+
+  @media (min-width: 880px) {
+    section { grid-template-columns: 148px 1fr; gap: 28px; }
+    .rail { padding-top: 5px; }
+  }
+
+  .rail {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  h2 {
+    font-family: var(--font-display);
+    font-size: 1.0625rem;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  .body-col { display: flex; flex-direction: column; gap: 26px; min-width: 0; }
+
+  /* ---- entries ---- */
+
+  .entry { display: flex; flex-direction: column; gap: 7px; }
+
+  .entry-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 10px;
+  }
+
+  .entry h3 {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .when {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .status {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+  }
+  .status.planned { border-color: var(--hairline); color: var(--muted); }
+
+  .entry p { margin: 0; max-width: 64ch; }
+  .entry .meta { font-size: 14px; color: var(--muted); }
+
+  .sep { height: 1px; background: var(--hairline); border: 0; margin: 0; }
+
+  ul.plain { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 22px; }
+
+  .pub {
+    border-left: 2px solid var(--accent);
+    padding-left: 16px;
+  }
+  .pub .tag {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 4px;
+  }
+  .pub .cite { margin: 0; max-width: 64ch; }
+  .pub .cite em { font-style: normal; background: var(--accent-soft); padding: 0 3px; }
+
+  footer {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--muted);
+    border-top: 1px solid var(--hairline);
+    padding-top: 18px;
+    line-height: 1.9;
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <header class="hero">
+    <p class="eyebrow">Wearable Ultrasound · Soft Interfaces</p>
+
+    <h1>이예은<span class="latin">Yeeun Lee</span></h1>
+
+    <p class="standfirst">
+      피부에 붙여 근육 활동을 장시간 들여다보는 <strong>웨어러블 초음파 시스템</strong>을 연구합니다.
+      화공생명공학에서 출발해, 지금은 센서와 피부 사이의 음향 계면을 소재 쪽에서 풀고 있습니다.
+      커플런트에서 시작해 유연 소자와 회로, 그리고 신호 분석까지 한 줄기로 잇는 것이 목표입니다.
+    </p>
+
+    <p class="affil">
+      숙명여자대학교 기계시스템학과 석사과정<br>
+      지도교수 심주용
+    </p>
+
+    <div class="chips">
+      <span class="chip"><span class="k">Email</span> dldpdms7889@sookmyung.ac.kr</span>
+      <a class="chip" href="https://orcid.org/0009-0003-1836-1058"><span class="k">ORCID</span> 0009-0003-1836-1058</a>
+      <a class="chip" href="https://www.linkedin.com/in/yeeunlee-smwu"><span class="k">LinkedIn</span> yeeunlee-smwu</a>
+    </div>
+
+    <ul class="keywords" aria-label="Research keywords">
+      <li>Wearable ultrasound</li>
+      <li>Muscle activity monitoring</li>
+      <li>Hydrogel ultrasound couplant</li>
+      <li>Flexible electronics</li>
+      <li>Biosignal analysis</li>
+    </ul>
+  </header>
+
+  <figure>
+    <div class="figwrap">
+      <svg id="echo" viewBox="0 0 820 250" role="img"
+           aria-label="초음파 펄스-에코 모식도. 트랜스듀서에서 보낸 펄스가 커플런트와 피부, 피부와 근육 경계에서 반사되어 돌아오는 신호를 보여줍니다. 커플런트가 마르면 첫 경계에서 음향 임피던스 차이가 커져 신호가 약해집니다.">
+      </svg>
+    </div>
+    <figcaption>
+      초음파는 음향 임피던스가 바뀌는 경계마다 되돌아옵니다. 트랜스듀서와 피부 사이를 메우는
+      커플런트가 마르면 그 첫 경계에서 대부분의 에너지를 잃고, 더 깊은 근육의 신호가 묻힙니다.
+      장시간 모니터링에서 소재가 먼저 걸리는 이유입니다.
+    </figcaption>
+  </figure>
+
+  <hr class="sep">
+
+  <section>
+    <div class="rail">Research</div>
+    <div class="body-col">
+
+      <div class="entry">
+        <div class="entry-head">
+          <h3>센서-피부 계면: 하이드로겔 초음파 커플런트</h3>
+          <span class="status">진행 중</span>
+          <span class="when">2025.09 –</span>
+          <!-- 학부연구생으로 시작해 석사과정으로 이어짐 -->
+        </div>
+        <p>
+          상용 초음파 젤은 몇 시간이면 말라붙어 장시간 계측에 쓸 수 없습니다. 계측 내내 습윤 상태와
+          피부 점착성을 유지하는 하이드로겔 기반 커플런트를 설계·합성하고, 조성을 변수로 장시간
+          초음파 이미지 품질이 어떻게 변하는지 평가하는 실험 프로토콜을 세웠습니다.
+        </p>
+        <p class="meta">제1저자 저널 논문 집필 중</p>
+      </div>
+
+      <div class="entry">
+        <div class="entry-head">
+          <h3>웨어러블 초음파 근육 활동 모니터링 시스템</h3>
+          <span class="status">진행 중</span>
+          <span class="when">2026 –</span>
+        </div>
+        <p>
+          직접 만든 커플런트를 상용 초음파 센서에 적용해 사람 몸에 붙이고, 거기서 얻은 근육 활동
+          신호를 분석하고 있습니다. 소재에서 계면으로, 다시 시스템으로 범위를 넓히는 가운데 과제입니다.
+        </p>
+        <p class="meta">측정 대상 근육과 분석 지표는 수립 중</p>
+      </div>
+
+      <div class="entry">
+        <div class="entry-head">
+          <h3>웨어러블 센서용 유연 소자 · 유연 회로</h3>
+          <span class="status planned">예정</span>
+          <span class="when">2026 –</span>
+        </div>
+        <p>
+          피부 부착형 초음파 센서를 직접 구동하기 위한 유연 소자와 유연 회로를 설계·제작할
+          계획입니다. 상용 센서를 자체 제작 센서로 바꿔, 소재부터 회로까지 손으로 구성한
+          모니터링 시스템을 만드는 것이 다음 목표입니다.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <section>
+    <div class="rail">Publications</div>
+    <div class="body-col">
+      <div class="pub">
+        <span class="tag">In preparation</span>
+        <p class="cite">
+          <strong>Yeeun Lee</strong>, et al. <em>장시간 초음파 모니터링을 위한 하이드로겔 커플런트</em> (가제).
+          2026년 저널 투고 예정.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <section>
+    <div class="rail">Education</div>
+    <div class="body-col">
+      <ul class="plain">
+        <li class="entry">
+          <div class="entry-head">
+            <h3>숙명여자대학교 기계시스템학과 — 석사과정</h3>
+            <span class="when">2026.03 –</span>
+          </div>
+          <p class="meta">웨어러블 초음파 기반 근육 활동 모니터링 · 지도교수 심주용</p>
+        </li>
+        <li class="entry">
+          <div class="entry-head">
+            <h3>숙명여자대학교 기계시스템학과 — 학부연구생</h3>
+            <span class="when">2025.09 – 2026.02</span>
+          </div>
+          <p class="meta">현 연구실에 합류해 하이드로겔 커플런트 연구를 시작하고, 초음파 계측을 위한 실험 장비를 세팅</p>
+        </li>
+        <li class="entry">
+          <div class="entry-head">
+            <h3>숙명여자대학교 화공생명공학부 — 공학사</h3>
+            <span class="when">2021.03 – 2025.02</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <section>
+    <div class="rail">Projects</div>
+    <div class="body-col">
+      <ul class="plain">
+
+        <li class="entry">
+          <div class="entry-head">
+            <h3>MoS₂ 상(phase)별 리튬이온 전지 소재 특성 DFT 해석</h3>
+            <span class="when">2025</span>
+          </div>
+          <p>
+            1T · 2H MoS₂ monolayer를 CASTEP 기반 DFT(PBE, cutoff 600 eV)로 계산해 구조 최적화와
+            전자 구조, 리튬 흡착 에너지를 비교했습니다. 2H 상의 밴드갭 1.676 eV는 보고된 실험값
+            1.67 eV와 오차 0.036%로 맞았습니다. Python(ASE)으로 supercell과 흡착 사이트 생성
+            스크립트를 작성했습니다.
+          </p>
+        </li>
+
+        <li class="entry">
+          <div class="entry-head">
+            <h3>저온 폐열 회수 ORC 플랜트 타당성 평가</h3>
+            <span class="when">2023</span>
+          </div>
+          <p>
+            105 °C · 15 ton/hr 폐열을 전력으로 회수하는 유기 랭킨 사이클 플랜트를 Aspen HYSYS로
+            설계하고, 엑서지 효율을 지표로 다섯 개 공정 케이스를 비교해 터빈 출력 35.03 kW
+            조건을 골랐습니다. REC 수익을 포함한 세 가지 사업 시나리오로 수익성을 따져,
+            제도적 지원 없이는 상용화가 어렵다는 결론을 냈습니다.
+          </p>
+        </li>
+
+        <li class="entry">
+          <div class="entry-head">
+            <h3>2025 반도체 공정실습 교육 이수</h3>
+            <span class="when">2025.06</span>
+          </div>
+          <p class="meta">
+            숙명여자대학교 경력개발처 주관 / 서울대학교 반도체공동연구소(ISRC) · 31시간
+          </p>
+        </li>
+
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    이예은 · 숙명여자대학교 기계시스템학과<br>
+    dldpdms7889@sookmyung.ac.kr
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  var svg = document.getElementById("echo");
+  if (!svg) return;
+
+  var NS = "http://www.w3.org/2000/svg";
+  var W = 820, bandTop = 14, bandH = 42;
+  var axisY = 196, waveMid = 150, amp = 44;
+
+  // Depth map: transducer | couplant | skin | muscle
+  var layers = [
+    { x0: 0,   x1: 96,  label: "트랜스듀서", fill: "var(--hairline)", op: 0.9 },
+    { x0: 96,  x1: 236, label: "커플런트",   fill: "var(--accent)",   op: 0.26 },
+    { x0: 236, x1: 352, label: "피부",       fill: "var(--accent)",   op: 0.13 },
+    { x0: 352, x1: 820, label: "근육",       fill: "var(--accent)",   op: 0.07 }
+  ];
+
+  function el(name, attrs) {
+    var n = document.createElementNS(NS, name);
+    for (var k in attrs) n.setAttribute(k, attrs[k]);
+    return n;
+  }
+
+  layers.forEach(function (L) {
+    svg.appendChild(el("rect", {
+      x: L.x0, y: bandTop, width: L.x1 - L.x0, height: bandH,
+      fill: L.fill, "fill-opacity": L.op
+    }));
+    var t = el("text", {
+      x: L.x0 + 9, y: bandTop + 26,
+      fill: "var(--ink)", class: "svg-band"
+    });
+    t.textContent = L.label;
+    svg.appendChild(t);
+  });
+
+  // Interfaces that send an echo back
+  var interfaces = [
+    { x: 236, strength: 1.0,  name: "커플런트 / 피부" },
+    { x: 352, strength: 0.62, name: "피부 / 근육" },
+    { x: 596, strength: 0.3,  name: "근육 내부" }
+  ];
+
+  interfaces.forEach(function (I) {
+    svg.appendChild(el("line", {
+      x1: I.x, y1: bandTop, x2: I.x, y2: axisY,
+      stroke: "var(--accent)", "stroke-width": 1,
+      "stroke-dasharray": "3 4", "stroke-opacity": 0.55
+    }));
+  });
+
+  // Baseline
+  svg.appendChild(el("line", {
+    x1: 0, y1: waveMid, x2: W, y2: waveMid,
+    stroke: "var(--hairline)", "stroke-width": 1
+  }));
+
+  // A-line: damped wave packets centred on each interface
+  var d = "";
+  for (var x = 0; x <= W; x += 1.5) {
+    var y = 0;
+    for (var i = 0; i < interfaces.length; i++) {
+      var I = interfaces[i];
+      var dx = x - I.x;
+      var env = Math.exp(-(dx * dx) / 420);
+      y += I.strength * env * Math.sin(dx / 4.1);
+    }
+    var py = waveMid - y * amp;
+    d += (x === 0 ? "M" : "L") + x.toFixed(1) + " " + py.toFixed(2);
+  }
+  svg.appendChild(el("path", {
+    d: d, fill: "none", stroke: "var(--accent)",
+    "stroke-width": 1.6, "stroke-linejoin": "round"
+  }));
+
+  // Depth axis
+  svg.appendChild(el("line", {
+    x1: 0, y1: axisY, x2: W, y2: axisY,
+    stroke: "var(--hairline)", "stroke-width": 1
+  }));
+
+  interfaces.forEach(function (I) {
+    var t = el("text", {
+      x: I.x + 7, y: axisY + 20,
+      fill: "var(--muted)", class: "svg-band"
+    });
+    t.textContent = I.name;
+    svg.appendChild(t);
+  });
+
+  var depth = el("text", {
+    x: W, y: axisY + 40, "text-anchor": "end",
+    fill: "var(--muted)", class: "svg-band"
+  });
+  depth.textContent = "깊이 (왕복 시간) →";
+  svg.appendChild(depth);
+})();
+</script>
+
+</body>
+</html>
